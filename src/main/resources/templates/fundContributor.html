@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta charset="UTF-8">
+  <title>Fund contributor</title>
+  <style>
+    * {box-sizing: border-box;}
+
+    .all-projects {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .project {
+      border: solid 2px blue;
+      border-radius: 15px;
+      margin-top: 20px;
+      padding: 20px;
+      margin-right: 20px;
+      margin-bottom: 20px;
+      width: 25%;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .topnav {
+      overflow: hidden;
+      background-color: blue;
+    }
+
+    .topnav a {
+      float: left;
+      display: block;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .topnav .search-container {
+      float: right;
+    }
+
+    .topnav input[type=text] {
+      padding: 6px;
+      margin-top: 8px;
+      font-size: 17px;
+      border: none;
+    }
+
+    .topnav .search-container button {
+      float: right;
+      padding: 6px 10px;
+      margin-top: 8px;
+      margin-right: 16px;
+      background: #ddd;
+      font-size: 17px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .topnav .search-container button:hover {
+      background: #ccc;
+    }
+
+  </style>
+</head>
+<body style="font-family: sans-serif; margin: 0; height: 100vh">
+  <script>
+    function donate(projectId) {
+      const orgUrl = window.location;
+      const params = new URLSearchParams(location.search);
+
+      const url = "/donate/project?email=" + params.get("email") + "&projectId=" + projectId;
+      fetch(url, {
+        method: "POST"
+      }).then(res => {
+        res.text().then(res => {
+          alert(res);
+          window.location.reload();
+        })
+
+        // alert("Successfully donated");
+      }).catch(err => {
+        alert("Error donated");
+      })
+    }
+
+    function getProjects(email) {
+      const projectsToSearch = this.searchProjectsForm.searchProjects.value;
+      window.location = `/fund-contributor/home?email=${email}&projects=${projectsToSearch}`;
+      return true;
+    }
+  </script>
+
+  <!--    navbar-->
+  <div class="topnav">
+    <a style="color: white;" th:href="@{'/fund-contributor/home?projects=all&email=' + ${user.getEmail()}}">Home</a>
+    <a style="color: white" href="/">Log out</a>
+    <div class="search-container">
+      <form th:email="${user.getEmail()}" onsubmit="event.preventDefault(); return getProjects(this.getAttribute('email'))" name="searchProjectsForm">
+        <input type="text" placeholder="Search.." name="searchProjects">
+        <button type="submit"><i class="fa fa-search"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <div class="all-projects">
+    <div class="project" th:each="project : ${projects}">
+      <h3 th:text="${project.getName()}"/>
+      <h5>Funds required: <span th:text="${project.getTargetAmount()}"/></h5>
+      <h5>Funds given: <span th:text="${project.getFundsGiven()}"/></h5>
+      <h5>Project purpose: <span th:text="${project.getProjectPurpose()}"/></h5>
+      <h5>Project location: <span th:text="${project.getLocation()}"/></h5>
+      <h5>Posted by: <span th:text="${project.getFundSeekerEmail()}"/></h5>
+      <button th:onclick="|donate(${project.getId()})|">Donate 100</button>
+    </div>
+  </div>
+
+</body>
+</html>

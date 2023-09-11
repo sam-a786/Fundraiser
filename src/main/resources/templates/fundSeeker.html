@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fund seeker</title>
+    <style>
+        input {
+            padding: 7px;
+            border-color: blue;
+            border-radius: 15px;
+            width: 80%;
+            margin-top: 10px;
+        }
+        button {
+            border: none;
+            padding: 12px;
+            margin-top: 30px;
+            width: 85%;
+            border-radius: 15px;
+            background-color: blue;
+            color: white;
+        }
+        label {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body style="font-family: sans-serif; margin: 0; height: 100vh">
+    <script>
+        function submitProject(email) {
+            const projectName = document.submitForm.projectName.value;
+            const projectPurpose = document.submitForm.projectPurpose.value;
+            const projectTargetAmount = document.submitForm.projectTargetAmount.value;
+            const projectTargetDate = document.submitForm.projectTargetDate.value;
+            const projectLocation = document.submitForm.projectLocation.value;
+            const url = `/fund-seeker/add/project?projectName=${projectName}&projectPurpose=${projectPurpose}&projectTargetAmount=${projectTargetAmount}&projectTargetDate=${projectTargetDate}&email=${email}&projectLocation=${projectLocation}`;
+            fetch(url, {
+                method: "POST"
+            }).then(res => {
+                if (res.status === 200) {
+                    alert("Project added");
+                } else if (res.status === 400) {
+                    alert("Could not add project");
+                }
+            }).catch(err => {
+                alert(err);
+            })
+            return true;
+        }
+    </script>
+
+    <!--    navbar-->
+   <div style="width: 100%; height: 60px; background-color: blue; display: flex; align-items: center">
+       <a style="text-decoration: none; color: white; padding: 40px" th:href="@{'/fund-seeker/home?email=' + ${user.getEmail()}}">Home</a>
+       <a style="text-decoration: none; color: white; margin-right: 40px" th:href="@{'/fund-seeker/dashboard?email=' + ${user.getEmail()}}">Dashboard</a>
+       <a style="text-decoration: none; color: white" href="/">Log out</a>
+   </div>
+
+    <div style="display: flex; justify-content: center; width: 100%; align-items: center">
+        <form style="width: 30%" th:email="${user.getEmail()}" onsubmit="event.preventDefault(); submitProject(this.getAttribute('email'));" name="submitForm">
+            <h1>Add project</h1>
+            <label>
+                Project name <br>
+                <input type="text" required name="projectName"/>
+            </label> <br>
+            <label>
+                Purpose of project <br>
+                <input type="text" required name="projectPurpose"/>
+            </label> <br>
+            <label>
+                Project target amount <br>
+                <input type="text" required name="projectTargetAmount"/>
+            </label> <br>
+            <label>
+                Project target date <br>
+                <input type="text" required name="projectTargetDate"/>
+            </label> <br>
+            <label>
+                Project location <br>
+                <input type="text" required name="projectLocation"/>
+            </label> <br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

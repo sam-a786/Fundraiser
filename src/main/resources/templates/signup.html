@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+    <style>
+        button {
+            border: none;
+            padding: 12px;
+            margin-top: 30px;
+            width: 85%;
+            border-radius: 15px;
+            background-color: blue;
+            color: white;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .user-input {
+            padding: 7px;
+            border-color: blue;
+            border-radius: 15px;
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        .user-type-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            width: 85%;
+        }
+    </style>
+</head>
+<body style="font-family: sans-serif; margin: 0">
+
+<script>
+
+    function checkUser() {
+        const email = document.registerForm.email.value;
+        const password = document.registerForm.password.value;
+        const contactName = document.registerForm.contactName.value;
+        const debitCard = document.registerForm.debitCard.value;
+        const userType = document.registerForm.userType.value;
+        const url = `/user/register?email=${email}&password=${password}&userType=${userType}&debitCard=${debitCard}&contactName=${contactName}`;
+        fetch(url, {
+            method: "POST"
+        }).then(res => {
+            if (res.status === 200) {
+                window.location = "/";
+            } else if (res.status === 400) {
+                alert("User not registered");
+            }
+        }).catch(err => {
+            alert(err);
+        })
+        return true;
+    }
+</script>
+
+<!--    navbar-->
+<div style="width: 100%; height: 60px; background-color: blue; display: flex; align-items: center">
+  <a style="text-decoration: none; color: white; padding: 40px" href="/">Sign in</a>
+</div>
+
+<div style="width: 100%; height: 100%; display: flex; justify-content: center">
+    <div style="padding: 20px; width: 30%">
+
+        <h1>Sign up</h1>
+        <form name="registerForm" onsubmit="event.preventDefault(); checkUser();">
+            <label>
+                contact name <br>
+                <input class="user-input" name="contactName" required type="text"/>
+            </label>
+            <label style="margin-top: 20px">
+                email <br>
+                <input class="user-input" name="email" required type="text"/>
+            </label>
+            <label style="margin-top: 20px">
+                debit card <br>
+                <input minlength="16" maxlength="16" class="user-input" name="debitCard" required type="text"/>
+            </label>
+            <label style="margin-top: 20px">
+                password <br>
+                <input minlength="10" class="user-input" name="password" required type="text"/>
+            </label>
+            <div class="user-type-container">
+                <label for="Fund seeker">Fund seeker</label>
+                <input id="Fund seeker" name="userType" type="radio" value="fund-seeker">
+            </div>
+            <div class="user-type-container">
+                <label for="Fund contributor">Fund contributor</label>
+                <input id="Fund contributor" name="userType" type="radio" value="fund-contributor">
+            </div>
+            <button type="submit">Sign up</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
